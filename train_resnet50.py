@@ -10,15 +10,16 @@ from tensorflow.python.keras.layers import Flatten, Dense, Dropout
 from tensorflow.python.keras.applications.resnet50 import ResNet50, preprocess_input
 from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
 
 
-DATASET_PATH  = './catsdogs/sample'
-IMAGE_SIZE    = (224, 224)
-NUM_CLASSES   = 2
+DATASET_PATH  = './dr_dataset'
+IMAGE_SIZE    = (197, 197)
+NUM_CLASSES   = 5
 BATCH_SIZE    = 8  # try reducing batch size or freeze more layers if your GPU runs out of memory
 FREEZE_LAYERS = 2  # freeze the first this many layers for training
-NUM_EPOCHS    = 20
-WEIGHTS_FINAL = 'model-resnet50-final.h5'
+NUM_EPOCHS    = 10
+WEIGHTS_FINAL = 'model-resnet50-dr.h5'
 
 
 train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input,
@@ -73,7 +74,7 @@ net_final.compile(optimizer=Adam(lr=1e-5),
 print(net_final.summary())
 
 # train the model
-net_final.fit_generator(train_batches,
+history = net_final.fit_generator(train_batches,
                         steps_per_epoch = train_batches.samples // BATCH_SIZE,
                         validation_data = valid_batches,
                         validation_steps = valid_batches.samples // BATCH_SIZE,
@@ -81,3 +82,12 @@ net_final.fit_generator(train_batches,
 
 # save trained weights
 net_final.save(WEIGHTS_FINAL)
+
+# 繪出訓練過程準確度變化
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'validate'], loc='upper left')
+plt.show()

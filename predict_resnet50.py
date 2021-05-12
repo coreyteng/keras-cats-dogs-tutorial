@@ -42,12 +42,13 @@ def get_files(path):
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    files = get_files(args.path)
+    # args = parse_args()
+    # files = get_files(args.path)
+    files = get_files('./catsdogs/sample/test/')
     cls_list = ['cats', 'dogs']
 
     # load the trained model
-    net = load_model('model-resnet50-final.h5')
+    net = load_model('model-resnet50-dr.h5')
 
     # loop through all files and make predictions
     for f in files:
@@ -62,3 +63,4 @@ if __name__ == '__main__':
         print(f)
         for i in top_inds:
             print('    {:.3f}  {}'.format(pred[i], cls_list[i]))
+
